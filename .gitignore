@@ -1,0 +1,12 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.env
+
+# Raw source data (has its own git repo)
+lennys-newsletterpodcastdata-all/
+
+# OS
+.DS_Store
+Thumbs.db
