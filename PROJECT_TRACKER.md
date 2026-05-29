@@ -10,6 +10,15 @@ git config core.hooksPath .githooks
 
 ---
 
+## 2026-05-29 — README and pre-commit hook
+
+**Commits:** `da9714b`
+
+- Added `README.md` covering dataset stats (306 records, 257 unique titles, Dec 2020–May 2026), record schema, full pipeline diagram, per-script descriptions, run instructions, and dev setup
+- Added `.githooks/pre-commit` — prints a non-blocking reminder when `PROJECT_TRACKER.md` isn't staged; activate once per clone with `git config core.hooksPath .githooks`
+
+---
+
 ## 2026-05-29 — Repo correction & legacy folder cleanup
 
 **Commits:** `3983655`
