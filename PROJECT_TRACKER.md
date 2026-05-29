@@ -10,6 +10,16 @@ git config core.hooksPath .githooks
 
 ---
 
+## 2026-05-29 — Claude Design prompt
+
+**Commits:** `(next)`
+
+- Added `claude-design-prompt.md` — a full design brief for rebuilding `books_table.html` as a deployable website using Claude Design
+- Brief covers: site structure (hero stats bar, insights dashboard, book browser), design direction (dark-mode-first, serif + grotesque + mono type stack, warm amber accent, cover-art fallbacks, card hover physics), technical requirements (single HTML file, no build step, fetch-based JSON loading, GitHub Pages ready), and specific insight sections to build (top books, top recommenders, books by job role, genre breakdown, published timeline, source mix)
+- Key stats surfaced for the prompt from `books_clean.json` analysis: 4× most-recommended titles, top 8 recommenders, oldest books, subject distribution
+
+---
+
 ## 2026-05-29 — README and pre-commit hook
 
 **Commits:** `da9714b`
