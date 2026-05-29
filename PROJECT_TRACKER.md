@@ -101,7 +101,7 @@ All pipeline scripts and output data committed to `bpmanning/lennys-books` for t
 
 ---
 
-## 2026-05-29 — Data audit: full TITLE_FIX / AUTHOR_FIX pass on clean_books.py
+## 2026-05-28 — Data audit: full TITLE_FIX / AUTHOR_FIX pass on clean_books.py
 
 **~110 fixes applied across three audit rounds.** All fixes applied in `clean_books.py` before `clean_title()` processing.
 
@@ -141,7 +141,7 @@ All pipeline scripts and output data committed to `bpmanning/lennys-books` for t
 
 ---
 
-## 2026-05-29 — Author enrichment via Open Library
+## 2026-05-28 — Author enrichment via Open Library
 
 - Built `enrich_books.py` — queries OL search API for any book with a missing or placeholder author
 - Fuzzy title-match with `SequenceMatcher`; threshold 0.72; author-name match adds +0.08 bonus
@@ -150,7 +150,7 @@ All pipeline scripts and output data committed to `bpmanning/lennys-books` for t
 
 ---
 
-## 2026-05-29 — Comprehensive extraction: extract_titles.py (6-pass)
+## 2026-05-28 — Comprehensive extraction: extract_titles.py (6-pass)
 
 - Replaced the v1–v3 extraction scripts with `extract_titles.py` — a purpose-built 6-pass extractor
 - **Pass 1:** `"Title by Author"` pattern (inherited from v1)
@@ -164,7 +164,7 @@ All pipeline scripts and output data committed to `bpmanning/lennys-books` for t
 
 ---
 
-## 2026-05-29 — Initial extraction pipeline (v1–v3)
+## 2026-05-28 — Initial extraction pipeline (v1–v3)
 
 Three iterative extraction attempts before settling on the 6-pass approach:
 
