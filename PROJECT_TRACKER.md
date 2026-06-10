@@ -10,6 +10,15 @@ git config core.hooksPath .githooks
 
 ---
 
+## 2026-06-09 — Timeline scrubber and duplicate check
+
+**Commits:** `(next)`
+
+- Added dual-handle range scrubber below the "Published across the ages" scatterplot — drag handles to zoom into any date range; axis labels regenerate based on view span; Reset zoom link appears when zoomed
+- Verified book grid deduplication: `aggregate()` keys on lowercased title+author, so duplicates in raw data are merged; no rendering path re-introduces dupes
+
+---
+
 ## 2026-06-09 — Fix filter counts and dropdown styling
 
 **Commits:** `(next)`

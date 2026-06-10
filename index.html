@@ -300,6 +300,18 @@ a{color:inherit;text-decoration:none}
 .tl-tip{position:fixed;z-index:200;background:var(--bg-deep);border:1px solid var(--border-strong);border-radius:9px;padding:9px 12px;font-size:12px;pointer-events:none;opacity:0;transition:opacity .15s;max-width:220px;box-shadow:var(--shadow)}
 .tl-tip b{font-family:var(--serif);font-size:14px}
 .tl-tip .y{font-family:var(--mono);color:var(--accent);font-size:11px}
+/* scrubber */
+.tl-scrubber{margin:22px 0 2px;position:relative}
+.tl-scrubber-track{height:4px;border-radius:2px;background:var(--surface-2);position:relative;margin:8px 0}
+.tl-scrubber-fill{position:absolute;top:0;height:100%;background:var(--accent);border-radius:2px;opacity:.55}
+.tl-scrubber-inputs{position:relative;height:0}
+.tl-scrubber-inputs input[type=range]{position:absolute;width:100%;height:4px;appearance:none;-webkit-appearance:none;background:none;pointer-events:none;top:-2px;margin:0;padding:0;outline:none}
+.tl-scrubber-inputs input[type=range]::-webkit-slider-thumb{appearance:none;-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--accent);border:2.5px solid var(--bg);box-shadow:0 1px 6px rgba(0,0,0,.35);pointer-events:all;cursor:grab;transition:transform .15s}
+.tl-scrubber-inputs input[type=range]:active::-webkit-slider-thumb{transform:scale(1.2)}
+.tl-scrubber-inputs input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;background:var(--accent);border:2px solid var(--bg);pointer-events:all;cursor:grab}
+.tl-scrubber-labels{display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--text-faint);margin-top:6px}
+.tl-reset{font-size:11px;font-family:var(--mono);color:var(--text-faint);cursor:pointer;text-decoration:underline;text-underline-offset:2px;float:right;margin-top:6px}
+.tl-reset:hover{color:var(--accent)}
 
 /* source mix */
 .src-bar{display:flex;height:46px;border-radius:11px;overflow:hidden;border:1px solid var(--border)}
@@ -573,6 +585,15 @@ a{color:inherit;text-decoration:none}
         <div class="tl-wrap">
           <div class="tl-track" id="tlTrack"></div>
           <div class="tl-axis" id="tlAxis"></div>
+          <div class="tl-scrubber">
+            <div class="tl-scrubber-track"><div class="tl-scrubber-fill" id="tlFill"></div></div>
+            <div class="tl-scrubber-inputs">
+              <input type="range" id="tlRangeMin" min="-500" max="2026" value="-500" step="1"/>
+              <input type="range" id="tlRangeMax" min="-500" max="2026" value="2026" step="1"/>
+            </div>
+            <div class="tl-scrubber-labels"><span id="tlScrubLo"></span><span id="tlScrubHi"></span></div>
+          </div>
+          <span class="tl-reset" id="tlReset" style="display:none">Reset zoom ✕</span>
         </div>
         <p class="dim" style="font-size:12px;margin-top:14px;line-height:1.5" id="tlNote"></p>
       </div>
@@ -768,6 +789,7 @@ a{color:inherit;text-decoration:none}
     renderRecommenders();
     renderRoles();
     renderTimeline();
+    initScrubber();
     buildFilterUI();
     applyFilters();
     setupReveal();
@@ -1190,25 +1212,38 @@ a{color:inherit;text-decoration:none}
      TIMELINE  (piecewise scale: antiquity compressed, modern expanded)
      ============================================================ */
   var TL_BREAK = 0.19, MODERN_START = 1900, NOW = 2026, ANCIENT = -500;
+  var TL_VIEW = { min: ANCIENT, max: NOW };
+
   function yearToX(y) {
     if (y < MODERN_START) {
-      var p = (y - ANCIENT) / (MODERN_START - ANCIENT); // 0..1 across antiquity
+      var p = (y - ANCIENT) / (MODERN_START - ANCIENT);
       return Math.max(0.01, p * TL_BREAK);
     }
     var q = (y - MODERN_START) / (NOW - MODERN_START);
     return (TL_BREAK + 0.02) + q * (1 - TL_BREAK - 0.02);
   }
+
+  function yearToXView(y) {
+    if (TL_VIEW.min === ANCIENT && TL_VIEW.max === NOW) return yearToX(y);
+    return Math.max(0, Math.min(1, (y - TL_VIEW.min) / (TL_VIEW.max - TL_VIEW.min)));
+  }
+
   function renderTimeline() {
     var track = $("#tlTrack"); track.innerHTML = "";
     var withYear = BOOKS.filter(function (b) { return b.year != null; });
-    $("#tlTag").textContent = withYear.length + " dated";
-    // break marker
-    var brk = el("div", "tl-break"); brk.style.left = (TL_BREAK * 100) + "%"; track.appendChild(brk);
-    withYear.forEach(function (b) {
-      var x = yearToX(b.year);
-      var y = 14 + (hashStr(b.title + "y") % 72); // vertical jitter 14..86%
+    var inView = withYear.filter(function (b) { return b.year >= TL_VIEW.min && b.year <= TL_VIEW.max; });
+    $("#tlTag").textContent = inView.length + " dated";
+
+    // break marker only in full view
+    if (TL_VIEW.min === ANCIENT && TL_VIEW.max === NOW) {
+      var brk = el("div", "tl-break"); brk.style.left = (TL_BREAK * 100) + "%"; track.appendChild(brk);
+    }
+
+    inView.forEach(function (b) {
+      var x = yearToXView(b.year);
+      var yp = 14 + (hashStr(b.title + "y") % 72);
       var dot = el("div", "tl-dot" + (b.year < MODERN_START ? " outlier" : ""));
-      dot.style.left = (x * 100) + "%"; dot.style.top = y + "%";
+      dot.style.left = (x * 100) + "%"; dot.style.top = yp + "%";
       dot.tabIndex = 0;
       dot.setAttribute("role", "button");
       dot.setAttribute("aria-label", b.title + ", published " + fmtYear(b.year));
@@ -1221,25 +1256,71 @@ a{color:inherit;text-decoration:none}
       dot.addEventListener("keydown", function (ev) { if (ev.key === "Enter") openDrawer(b); });
       track.appendChild(dot);
     });
-    // axis
+
+    // axis — generate smart ticks for current view range
     var axis = $("#tlAxis"); axis.style.position = "relative"; axis.innerHTML = "";
-    [[ANCIENT, "500 BC"], [MODERN_START, "1900"], [1960, "1960"], [2000, "2000"], [NOW, "Now"]].forEach(function (a) {
+    var ticks;
+    if (TL_VIEW.min === ANCIENT && TL_VIEW.max === NOW) {
+      ticks = [[ANCIENT, "500 BC"], [MODERN_START, "1900"], [1960, "1960"], [2000, "2000"], [NOW, "Now"]];
+    } else {
+      var span = TL_VIEW.max - TL_VIEW.min;
+      var step = span <= 20 ? 2 : span <= 50 ? 5 : span <= 100 ? 10 : span <= 200 ? 25 : span <= 500 ? 50 : 100;
+      var first = Math.ceil(TL_VIEW.min / step) * step;
+      ticks = [];
+      for (var y = first; y <= TL_VIEW.max; y += step) ticks.push([y, y < 0 ? Math.abs(y) + " BC" : "" + y]);
+      if (!ticks.length || ticks[0][0] > TL_VIEW.min + span * 0.1) ticks.unshift([TL_VIEW.min, fmtYear(TL_VIEW.min)]);
+      if (!ticks.length || ticks[ticks.length-1][0] < TL_VIEW.max - span * 0.1) ticks.push([TL_VIEW.max, fmtYear(TL_VIEW.max)]);
+    }
+    ticks.forEach(function (a) {
       var s = el("span", "", a[1]);
       s.style.position = "absolute";
-      var x = yearToX(a[0]) * 100;
+      var x = yearToXView(a[0]) * 100;
       s.style.left = x + "%";
       s.style.transform = x > 90 ? "translateX(-100%)" : (x < 3 ? "none" : "translateX(-50%)");
       axis.appendChild(s);
     });
     axis.style.height = "16px";
 
-    // note
-    var oldest = withYear.slice().sort(function (a, b) { return a.year - b.year; })[0];
-    var quirk = withYear.filter(function (b) { return b.year > 1700 && b.year < 1900; })
-      .sort(function (a, b) { return a.year - b.year; })[0];
+    var oldest = inView.slice().sort(function (a, b) { return a.year - b.year; })[0];
     var note = "";
     if (oldest) note += "Oldest on the shelf: <b>" + esc(oldest.title) + "</b> (" + fmtYear(oldest.year) + "). ";
     $("#tlNote").innerHTML = note;
+  }
+
+  function initScrubber() {
+    var rMin = $("#tlRangeMin"), rMax = $("#tlRangeMax");
+    var fill = $("#tlFill"), lo = $("#tlScrubLo"), hi = $("#tlScrubHi"), reset = $("#tlReset");
+    var fullMin = ANCIENT, fullMax = NOW;
+
+    function pct(v) { return (v - fullMin) / (fullMax - fullMin) * 100; }
+
+    function updateFill() {
+      var lo_pct = pct(+rMin.value), hi_pct = pct(+rMax.value);
+      fill.style.left = lo_pct + "%";
+      fill.style.width = (hi_pct - lo_pct) + "%";
+      lo.textContent = fmtYear(+rMin.value);
+      hi.textContent = fmtYear(+rMax.value);
+      var isDefault = +rMin.value === fullMin && +rMax.value === fullMax;
+      reset.style.display = isDefault ? "none" : "";
+    }
+
+    function onInput() {
+      var lo = +rMin.value, hi = +rMax.value;
+      if (lo > hi - 2) { if (this === rMin) rMin.value = hi - 2; else rMax.value = lo + 2; }
+      TL_VIEW.min = +rMin.value; TL_VIEW.max = +rMax.value;
+      updateFill();
+      renderTimeline();
+    }
+
+    rMin.addEventListener("input", onInput);
+    rMax.addEventListener("input", onInput);
+    reset.addEventListener("click", function () {
+      rMin.value = fullMin; rMax.value = fullMax;
+      TL_VIEW.min = fullMin; TL_VIEW.max = fullMax;
+      updateFill(); renderTimeline();
+    });
+
+    updateFill();
   }
   function fmtYear(y) { return y < 0 ? ("~" + Math.abs(y) + " BC") : ("" + y); }
 
