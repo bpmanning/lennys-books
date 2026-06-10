@@ -302,14 +302,14 @@ a{color:inherit;text-decoration:none}
 .tl-tip .y{font-family:var(--mono);color:var(--accent);font-size:11px}
 /* scrubber */
 .tl-scrubber{margin:22px 0 2px;position:relative}
-.tl-scrubber-track{height:4px;border-radius:2px;background:var(--surface-2);position:relative;margin:8px 0}
+.tl-scrubber-row{position:relative;height:20px;margin:4px 0}
+.tl-scrubber-track{position:absolute;top:50%;left:0;right:0;height:4px;border-radius:2px;background:var(--surface-2);transform:translateY(-50%)}
 .tl-scrubber-fill{position:absolute;top:0;height:100%;background:var(--accent);border-radius:2px;opacity:.55}
-.tl-scrubber-inputs{position:relative;height:0}
-.tl-scrubber-inputs input[type=range]{position:absolute;width:100%;height:4px;appearance:none;-webkit-appearance:none;background:none;pointer-events:none;top:-2px;margin:0;padding:0;outline:none}
-.tl-scrubber-inputs input[type=range]::-webkit-slider-thumb{appearance:none;-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--accent);border:2.5px solid var(--bg);box-shadow:0 1px 6px rgba(0,0,0,.35);pointer-events:all;cursor:grab;transition:transform .15s}
-.tl-scrubber-inputs input[type=range]:active::-webkit-slider-thumb{transform:scale(1.2)}
-.tl-scrubber-inputs input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;background:var(--accent);border:2px solid var(--bg);pointer-events:all;cursor:grab}
-.tl-scrubber-labels{display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--text-faint);margin-top:6px}
+.tl-scrubber-row input[type=range]{position:absolute;width:100%;height:20px;appearance:none;-webkit-appearance:none;background:none;pointer-events:none;top:0;left:0;margin:0;padding:0;outline:none}
+.tl-scrubber-row input[type=range]::-webkit-slider-thumb{appearance:none;-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--accent);border:2.5px solid var(--bg);box-shadow:0 1px 6px rgba(0,0,0,.35);pointer-events:all;cursor:grab;transition:transform .15s}
+.tl-scrubber-row input[type=range]:active::-webkit-slider-thumb{transform:scale(1.2)}
+.tl-scrubber-row input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;background:var(--accent);border:2px solid var(--bg);pointer-events:all;cursor:grab}
+.tl-scrubber-labels{display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--text-faint);margin-top:4px}
 .tl-reset{font-size:11px;font-family:var(--mono);color:var(--text-faint);cursor:pointer;text-decoration:underline;text-underline-offset:2px;float:right;margin-top:6px}
 .tl-reset:hover{color:var(--accent)}
 
@@ -586,8 +586,8 @@ a{color:inherit;text-decoration:none}
           <div class="tl-track" id="tlTrack"></div>
           <div class="tl-axis" id="tlAxis"></div>
           <div class="tl-scrubber">
-            <div class="tl-scrubber-track"><div class="tl-scrubber-fill" id="tlFill"></div></div>
-            <div class="tl-scrubber-inputs">
+            <div class="tl-scrubber-row">
+              <div class="tl-scrubber-track"><div class="tl-scrubber-fill" id="tlFill"></div></div>
               <input type="range" id="tlRangeMin" min="-500" max="2026" value="-500" step="1"/>
               <input type="range" id="tlRangeMax" min="-500" max="2026" value="2026" step="1"/>
             </div>
@@ -745,7 +745,12 @@ a{color:inherit;text-decoration:none}
   /* ============================================================
      DATA LOAD
      ============================================================ */
-  function bookKey(r) { return (r.book || "").toLowerCase().trim() + "::" + (r.author || "").toLowerCase().trim(); }
+  function normAuthorKey(a) {
+    // Use only first listed author, strip middle initials, so "Ed Catmull, Amy Wallace" → "ed catmull"
+    // and "Geoffrey A. Moore" → "geoffrey moore"
+    return (a || "").split(",")[0].toLowerCase().trim().replace(/\b[a-z]\.\s*/g, "").replace(/\s+/g, " ").trim();
+  }
+  function bookKey(r) { return (r.book || "").toLowerCase().trim() + "::" + normAuthorKey(r.author); }
 
   function aggregate(records) {
     var map = {};

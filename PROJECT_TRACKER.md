@@ -10,6 +10,15 @@ git config core.hooksPath .githooks
 
 ---
 
+## 2026-06-09 — Fix duplicates and scrubber alignment
+
+**Commits:** `(next)`
+
+- Fixed book deduplication: `bookKey` now normalizes to first author only and strips middle initials, so "Ed Catmull, Amy Wallace" → "Ed Catmull" and "Geoffrey A. Moore" → "Geoffrey Moore" — previously separate cards now merge correctly (266 → 260 books)
+- Fixed scrubber thumb alignment: moved range inputs inside a `.tl-scrubber-row` container with explicit height; track is absolutely centered in the row so thumbs sit on the track midline
+
+---
+
 ## 2026-06-09 — Timeline scrubber and duplicate check
 
 **Commits:** `(next)`
