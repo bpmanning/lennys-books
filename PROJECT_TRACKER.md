@@ -10,6 +10,14 @@ git config core.hooksPath .githooks
 
 ---
 
+## 2026-06-09 — Rename to index.html for GitHub Pages
+
+**Commits:** `(next)`
+
+- Renamed `lennysbooks.html` → `index.html` so GitHub Pages serves it at the root URL instead of the README
+
+---
+
 ## 2026-06-09 — lennysbooks.html website
 
 **Commits:** `a5cad00`
