@@ -10,6 +10,15 @@ git config core.hooksPath .githooks
 
 ---
 
+## 2026-06-09 — lennysbooks.html website
+
+**Commits:** `a5cad00`
+
+- Added `lennysbooks.html` — fully self-contained books website built and iteratively refined across multiple Claude Design sessions
+- Single HTML file, no build step; fetches `books_clean.json` for data; GitHub Pages ready
+
+---
+
 ## 2026-05-29 — Claude Design prompt
 
 **Commits:** `(next)`
