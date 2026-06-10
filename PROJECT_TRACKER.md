@@ -10,6 +10,14 @@ git config core.hooksPath .githooks
 
 ---
 
+## 2026-06-09 — Add live site link to README
+
+**Commits:** `(next)`
+
+- Added bold hyperlink to the live GitHub Pages site as the first line of README.md
+
+---
+
 ## 2026-06-09 — Fix duplicates and scrubber alignment
 
 **Commits:** `(next)`

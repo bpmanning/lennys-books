@@ -1,5 +1,7 @@
 # Lenny's Books
 
+**[Live site: bpmanning.github.io/lennys-books](https://bpmanning.github.io/lennys-books/)**
+
 A structured dataset of every book recommended on [Lenny's Newsletter & Podcast](https://www.lennysnewsletter.com) — extracted from full transcript archives, enriched with metadata, and published as a searchable HTML table.
 
 ---
