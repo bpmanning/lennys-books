@@ -10,6 +10,15 @@ git config core.hooksPath .githooks
 
 ---
 
+## 2026-06-09 — Fix filter counts and dropdown styling
+
+**Commits:** `(next)`
+
+- Fixed source filter chip counts: were counting raw recommendation records, now count unique books per source
+- Added `drop-btn` style for Genres and Sort controls — dashed border, transparent background — to visually distinguish them from the solid source filter chips
+
+---
+
 ## 2026-06-09 — Remove metadata gremlin note from Published Across the Ages card
 
 **Commits:** `(next)`

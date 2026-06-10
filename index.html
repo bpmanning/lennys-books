@@ -335,11 +335,26 @@ a{color:inherit;text-decoration:none}
 .chip .c-n{font-family:var(--mono);font-size:11px;opacity:.7}
 .selectwrap{position:relative}
 .selectwrap select{
-  height:42px;border-radius:11px;border:1px solid var(--border);background:var(--surface);color:var(--text);
+  height:42px;border-radius:11px;border:1px dashed var(--border-strong);background:transparent;color:var(--text-dim);
   padding:0 38px 0 15px;font-family:var(--sans);font-size:13px;cursor:pointer;outline:none;appearance:none;-webkit-appearance:none;
+  transition:border-color .18s,color .18s;
 }
 .selectwrap select:focus{border-color:var(--accent)}
 .selectwrap::after{content:"▾";position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--text-faint);pointer-events:none;font-size:11px}
+/* dropdown controls (Genres + Sort) — visually distinct from source filter chips */
+.drop-btn{
+  height:42px;padding:0 32px 0 15px;border-radius:11px;
+  border:1px dashed var(--border-strong);background:transparent;
+  color:var(--text-dim);font-size:13px;font-weight:500;cursor:pointer;
+  transition:all .18s;white-space:nowrap;display:inline-flex;align-items:center;gap:7px;
+  position:relative;font-family:var(--sans);
+}
+.drop-btn::after{content:"▾";position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:11px;color:var(--text-faint);pointer-events:none}
+.drop-btn:hover{border-color:var(--accent);color:var(--text)}
+.drop-btn.active{border-color:var(--accent);color:var(--accent)}
+.drop-btn .c-n{font-family:var(--mono);font-size:11px;opacity:.8}
+.selectwrap select{padding-right:38px}
+
 /* genre dropdown */
 .gdrop{position:relative}
 .gdrop-panel{
@@ -574,7 +589,7 @@ a{color:inherit;text-decoration:none}
     </label>
     <div class="chips" id="srcChips" role="group" aria-label="Filter by recommendation source"></div>
     <div class="gdrop" id="gdrop">
-      <button class="chip" id="gdropBtn" aria-haspopup="true" aria-expanded="false">Genres <span class="c-n" id="gdropCount"></span></button>
+      <button class="drop-btn" id="gdropBtn" aria-haspopup="true" aria-expanded="false">Genres <span class="c-n" id="gdropCount"></span></button>
       <div class="gdrop-panel" id="gdropPanel" role="group" aria-label="Filter by genre"></div>
     </div>
     <div class="selectwrap">
@@ -1249,7 +1264,13 @@ a{color:inherit;text-decoration:none}
      ============================================================ */
   function buildFilterUI() {
     // source chips
-    var srcCounts = {}; RECORDS.forEach(function (r) { srcCounts[r.source] = (srcCounts[r.source] || 0) + 1; });
+    var srcCounts = {};
+    BOOKS.forEach(function (b) {
+      var seen = {};
+      b.recs.forEach(function (r) {
+        if (r.source && !seen[r.source]) { seen[r.source] = 1; srcCounts[r.source] = (srcCounts[r.source] || 0) + 1; }
+      });
+    });
     var chipHost = $("#srcChips"); chipHost.innerHTML = "";
     var allChip = el("button", "chip", "All <span class='c-n'>" + BOOKS.length + "</span>");
     allChip.setAttribute("aria-pressed", "true");
