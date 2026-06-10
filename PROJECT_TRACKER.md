@@ -10,6 +10,14 @@ git config core.hooksPath .githooks
 
 ---
 
+## 2026-06-09 — Remove metadata gremlin note from Published Across the Ages card
+
+**Commits:** `(next)`
+
+- Removed the "Alice in Wonderland lists a publish year of 1865 — almost certainly a metadata gremlin" note from the timeline card
+
+---
+
 ## 2026-06-09 — Rename to index.html for GitHub Pages
 
 **Commits:** `(next)`
